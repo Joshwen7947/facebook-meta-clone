@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-	apiKey: 'AIzaSyDQV_XWbj9TbRyTYowKUcKkiMfLdG7GW4g',
+	apiKey: process.env.API_KEY,
 	authDomain: 'meta-clone-dde44.firebaseapp.com',
 	projectId: 'meta-clone-dde44',
 	storageBucket: 'meta-clone-dde44.appspot.com',
