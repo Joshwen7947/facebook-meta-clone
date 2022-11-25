@@ -12,7 +12,7 @@ function Login() {
 			/>
 			<h1
 				onClick={signIn}
-				className="p-5 bg-blue-500 rounded-full text-white text-center"
+				className="p-5 mt-15 bg-blue-500 rounded-full text-white text-center"
 			>
 				Login with Facebook
 			</h1>
