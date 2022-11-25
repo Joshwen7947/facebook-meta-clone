@@ -12,6 +12,7 @@
     "@heroicons/react": "^1.0.6",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
+    "firebase": "^9.14.0",
     "heroicons-react": "^1.4.1",
     "next": "13.0.5",
     "next-auth": "^4.17.0",
