@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { EmojiHappyIcon } from '@heroicons/react/outline';
@@ -8,8 +8,10 @@ import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
 
 function InputBox() {
 	const { data: session } = useSession();
+	const [imageToPost, setImageToPost] = useState(null);
 
 	const inputRef = useRef(null);
+	const filePickerRef = useRef(null);
 
 	const sendPost = (e) => {
 		e.preventDefault();
@@ -29,6 +31,21 @@ function InputBox() {
 		}
 
 		inputRef.current.value = '';
+	};
+
+	const addImageToPost = (e) => {
+		const reader = new FileReader();
+		if (e.target.files[0]) {
+			reader.readAsDataURL(e.target.files[0]);
+		}
+
+		reader.onload = (readerEvent) => {
+			setImageToPost(readerEvent.target.result);
+		};
+	};
+
+	const removeImage = () => {
+		setImageToPost(null);
 	};
 	return (
 		<div className="bg-white p-2 rounded-2xl shadow-md text-gray-500 font-medium mt-6">
@@ -51,15 +68,33 @@ function InputBox() {
 						Submit
 					</button>
 				</form>
+				{imageToPost && (
+					<div
+						onClick={removeImage}
+						className="flex flex-col filter hover:brightness-110 transition duration-150 transform hover:scale-105 cursor-pointer"
+					>
+						<img src={imageToPost} className="h-10 object-contain" alt="" />
+						<p className="text-xs text-red-500 text-center">Remove</p>
+					</div>
+				)}
 			</div>
 			<div className="flex justify-evenly p-3 border-t">
 				<div className="inputIcon">
 					<VideoCameraIcon className="h-7 text-red-500" />
 					<p className="text-xs sm:text-sm xl:text-base">Live Video</p>
 				</div>
-				<div className="inputIcon">
+				<div
+					onClick={() => filePickerRef.current.click()}
+					className="inputIcon"
+				>
 					<CameraIcon className="h-7 text-green-400" />
 					<p className="text-xs sm:text-sm xl:text-base">Photo/Video</p>
+					<input
+						ref={filePickerRef}
+						onChange={addImageToPost}
+						hidden
+						type={'file'}
+					/>
 				</div>
 				<div className="inputIcon">
 					<EmojiHappyIcon className="h-7 text-yellow-300" />
