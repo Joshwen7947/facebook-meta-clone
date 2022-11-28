@@ -3,8 +3,10 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { EmojiHappyIcon } from '@heroicons/react/outline';
 import { CameraIcon, VideoCameraIcon } from '@heroicons/react/solid';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
+import { Collection } from 'heroicons-react';
+import { ref, uploadString } from 'firebase/storage';
 
 function InputBox() {
 	const { data: session } = useSession();
@@ -24,6 +26,37 @@ function InputBox() {
 				email: session.user.email,
 				image: session.user.email,
 				timestamp: serverTimestamp(),
+			}).then((doc) => {
+				if (imageToPost) {
+					const storageRef = ref(storage, `posts/${doc.id}`);
+					const uploadTask = storageRef.putString(imageToPost, 'data_url');
+					removeImage();
+
+					uploadTask.on(
+						'state_change',
+						null,
+						(error) => console.error(error),
+						() => {
+							// When upload completes
+							storageRef
+								.ref(`posts`)
+								.child(doc.id)
+								.getDownloadURL()
+								.then((url) => {
+									docRef.addDoc(
+										Collection(db, 'posts')
+											.doc(doc.id)
+											.set(
+												{
+													postImage: url,
+												},
+												{ merge: true }
+											)
+									);
+								});
+						}
+					);
+				}
 			});
 			console.log(docRef.id);
 		} catch (e) {
