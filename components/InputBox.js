@@ -26,38 +26,45 @@ function InputBox() {
 				email: session.user.email,
 				image: session.user.email,
 				timestamp: serverTimestamp(),
-			}).then((doc) => {
-				if (imageToPost) {
-					const storageRef = ref(storage, `posts/${doc.id}`);
-					const uploadTask = storageRef.putString(imageToPost, 'data_url');
-					removeImage();
-
-					uploadTask.on(
-						'state_change',
-						null,
-						(error) => console.error(error),
-						() => {
-							// When upload completes
-							storageRef
-								.ref(`posts`)
-								.child(doc.id)
-								.getDownloadURL()
-								.then((url) => {
-									docRef.addDoc(
-										Collection(db, 'posts')
-											.doc(doc.id)
-											.set(
-												{
-													postImage: url,
-												},
-												{ merge: true }
-											)
-									);
-								});
-						}
-					);
-				}
 			});
+			// .then((doc) => {
+			// 	if (imageToPost) {
+			// 		try {
+			// 			const storageRef = ref(storage, `posts/${doc.id}`);
+			// 			console.log(storageRef);
+			// 			const uploadTask = storageRef.putString(imageToPost, 'data_url');
+			// 			removeImage();
+			// 			console.log(uploadTask);
+
+			// 			uploadTask.on(
+			// 				'state_change',
+			// 				null,
+			// 				(error) => console.error(error),
+			// 				() => {
+			// 					// When upload completes
+			// 					storageRef
+			// 						.ref(`posts`)
+			// 						.child(doc.id)
+			// 						.getDownloadURL()
+			// 						.then((url) => {
+			// 							docRef.addDoc(
+			// 								Collection(db, 'posts')
+			// 									.doc(doc.id)
+			// 									.set(
+			// 										{
+			// 											postImage: url,
+			// 										},
+			// 										{ merge: true }
+			// 									)
+			// 							);
+			// 						});
+			// 				}
+			// 			);
+			// 		} catch {
+			// 			console.log('ERROR');
+			// 		}
+			// 	}
+			// });
 			console.log(docRef.id);
 		} catch (e) {
 			console.log('ERROR ADDING DOC:', e);
