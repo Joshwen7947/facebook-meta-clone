@@ -4,7 +4,12 @@ import Header from '../components/Header';
 import Login from '../components/Login';
 import Sidebar from '../components/Sidebar';
 import Feed from '../components/Feed';
-export default function Home({ session }) {
+import Widgets from '../components/Widgets';
+import { db } from '../firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { collection } from 'firebase/firestore';
+
+export default function Home({ session, posts }) {
 	if (!session) return <Login />;
 	return (
 		<div className="h-screen bg-gray-100 overflow-hidden">
@@ -18,8 +23,9 @@ export default function Home({ session }) {
 				{/* sidebar */}
 				<Sidebar />
 				{/* feed */}
-				<Feed />
+				<Feed posts={posts} />
 				{/* widgets */}
+				<Widgets />
 			</main>
 		</div>
 	);
@@ -27,9 +33,25 @@ export default function Home({ session }) {
 
 export async function getServerSideProps(context) {
 	const session = await getSession(context);
+	// const posts = await useCollection(collection(db, 'posts'), {
+	// 	snapshotListenOptions: { includeMetadataChanges: true },
+	// })
+	// 	.orderBy('timestamp', 'desc')
+	// 	.get();
+	// const posts = await db
+	// 	.collection('posts')
+	// 	.orderBy('timestamp', 'desc')
+	// 	.get();
+
+	// const docs = posts.docs.map((post) => ({
+	// 	id: post.id,
+	// 	...post.data(),
+	// 	timestamp: null,
+	// }));
 	return {
 		props: {
 			session,
+			// posts: docs,
 		},
 	};
 }
